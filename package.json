@@ -1,0 +1,25 @@
+{
+  "name": "01_01_start",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prestart": "webpack",
+    "start": "node app-server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-core": "^6.24.0",
+    "babel-loader": "^6.4.0",
+    "babel-preset-react": "^6.23.0",
+    "bootstrap": "^3.3.7",
+    "express": "^4.15.2",
+    "nodemon": "^1.11.0",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "socket.io": "^1.7.3",
+    "socket.io-client": "^1.7.3"
+  },
+  "devDependencies": {}
+}
