@@ -9,24 +9,29 @@ var App = React.createClass({
 			status : "disconnected",
 			title : "",
 			member:{},
-			audience :[]
+			audience :[],
+			speaker : ""
 		};
 	},
 	componentWillMount(){
 		this.socket= io('http://localhost:3000');
 		this.socket.on('connect',this.connect);
-		this.socket.on('welcome',this.welcome);
+		this.socket.on('welcome',this.updateState);
 		this.socket.on('disconnect',this.disconnect);
 		this.socket.on('joined',this.joined);
 		this.socket.on('audience',this.updateAudience);
+		this.socket.on('start',this.start);
+		this.socket.on('end',this.updateState);
 	},
 	emit(eventName,data) {
 		this.socket.emit(eventName,data);
 	},
 	connect(){
 		var member=(sessionStorage.member) ? JSON.parse(sessionStorage.member) : null;
-		if(member){
+		if(member && member.type==='audience'){
 			this.emit('join',member);
+		}else if(member && member.type==='speaker'){
+			this.emit('start',{name:member.name,title:sessionStorage.title})
 		}
 		this.setState({
 			status : 'connected'
@@ -34,23 +39,31 @@ var App = React.createClass({
 	},
 	disconnect(){
 		this.setState({
-			status : 'disconnected'
+			status : 'disconnected',
+			title : 'disconnected',
+			speaker:''
 		});
 	},
-	welcome(serverState){
-		this.setState({title:serverState.title});
+	updateState(serverState){
+		this.setState(serverState);
 
 	},
 	joined(member) {
+		sessionStorage.member=JSON.stringify(member);
 		this.setState({
 			member:member
 		});
-		sessionStorage.member=JSON.stringify(member);
 	},
 	updateAudience(audience){
 		this.setState({
 			audience:audience
 		});
+	},
+	start(presentation) {
+		if(this.state.member.type==='speaker'){
+			sessionStorage.title=presentation.title;
+		}
+		this.setState(presentation);
 	},
 	render (){
         var children = React.Children.map(
@@ -61,14 +74,15 @@ var App = React.createClass({
 	              status: this.state.status,
 	              member :this.state.member,
 	              emit : this.emit,
-	              audience:this.state.audience
+	              audience:this.state.audience,
+	              speaker : this.state.speaker
 	            }
 	        )
         );
 
 		return (
 			<div>
-				<Header title={this.state.title} status={this.state.status} />
+				<Header {...this.state} />
 				<hr />
                 {children}		
             </div>
