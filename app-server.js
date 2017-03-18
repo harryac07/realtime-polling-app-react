@@ -5,10 +5,9 @@ app.use(express.static('./public'));
 app.use(express.static('./node_modules/bootstrap/dist'));
 
 // Handles all routes so you do not get a not found error
-app.get('*', function (request, response){
+app.get('/audience', function (request, response){
     response.sendFile(path.resolve(__dirname, 'public', 'index.html'))
 });
-
 var server = app.listen(3000);
 
 //socket io 

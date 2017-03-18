@@ -31,10 +31,21 @@ var App = React.createClass({
 
 	},
 	render (){
+        var children = React.Children.map(
+           this.props.children,
+           child => React.cloneElement(child,
+	            { 
+	              title:this.state.title,
+	              status: this.state.status
+	            }
+	        )
+        );
+
 		return (
 			<div>
 				<Header title={this.state.title} status={this.state.status} />
-                {this.props.children}		
+				<hr />
+                {children}		
             </div>
 		);
 	}
