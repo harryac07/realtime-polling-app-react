@@ -10,7 +10,10 @@ var App = React.createClass({
 			title : "",
 			member:{},
 			audience :[],
-			speaker : ""
+			speaker : "",
+			questions:[],
+			currentQuestion:false,
+			results:{}
 		};
 	},
 	componentWillMount(){
@@ -22,6 +25,8 @@ var App = React.createClass({
 		this.socket.on('audience',this.updateAudience);
 		this.socket.on('start',this.start);
 		this.socket.on('end',this.updateState);
+		this.socket.on('ask',this.ask);
+		this.socket.on('results',this.updateResults);
 	},
 	emit(eventName,data) {
 		this.socket.emit(eventName,data);
@@ -46,6 +51,7 @@ var App = React.createClass({
 	},
 	updateState(serverState){
 		this.setState(serverState);
+		console.log(this.state.questions);
 
 	},
 	joined(member) {
@@ -65,6 +71,20 @@ var App = React.createClass({
 		}
 		this.setState(presentation);
 	},
+
+	ask(question){
+		sessionStorage.answer='';
+		this.setState({
+			currentQuestion:question
+		});
+	},
+
+	updateResults(data) {
+		this.setState({
+			results : data
+		});
+	},
+
 	render (){
         var children = React.Children.map(
            this.props.children,
@@ -75,7 +95,10 @@ var App = React.createClass({
 	              member :this.state.member,
 	              emit : this.emit,
 	              audience:this.state.audience,
-	              speaker : this.state.speaker
+	              speaker : this.state.speaker,
+	              questions:this.state.questions,
+	              currentQuestion: this.state.currentQuestion,
+	              results : this.state.results
 	            }
 	        )
         );

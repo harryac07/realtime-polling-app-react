@@ -20,6 +20,14 @@ var connections = []; // to store all the connections
 var title = "Untitled Presentation";
 var audience = [];
 var speaker = {};
+var questions = require('./app-questions'); // array of questions
+var currentQuestion=false;
+var results={
+	a: 0,
+	b: 0,
+	c: 0,
+	d: 0
+};
 
 io.on('connection',function(socket){
 	connections.push(socket);
@@ -52,10 +60,26 @@ io.on('connection',function(socket){
 		console.log('presentation started '+title+' by '+speaker.name);
 	});
 
+	socket.on('ask',function(question){
+		currentQuestion = question;
+		results={a:0,b:0,c:0,d:0};
+		io.emit('ask',currentQuestion);
+		console.log('Asked question : '+currentQuestion.q);
+	});
+
+	socket.on('answer',function(payload){
+		results[payload.choice]++;
+		io.emit('results',results);
+		console.log('answer '+payload.choice+' \n '+JSON.stringify(results));
+	});
+
 	socket.emit('welcome',{
 		title:title,
 		audience:audience,
-		speaker :speaker.name
+		speaker :speaker.name,
+		questions:questions,
+		currentQuestion:currentQuestion,
+		results : results
 	});
 
 
