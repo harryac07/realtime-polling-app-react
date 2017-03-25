@@ -26330,11 +26330,13 @@ var App = React.createClass({
 	ask(question) {
 		sessionStorage.answer = '';
 		this.setState({
-			currentQuestion: question
+			currentQuestion: question,
+			results: { a: 0, b: 0, c: 0, d: 0 }
 		});
 	},
 
 	updateResults(data) {
+
 		this.setState({
 			results: data
 		});
@@ -26447,15 +26449,14 @@ var Board = React.createClass({
 	displayName: 'Board',
 
 
-	barGraphData(results) {
-		// console.log(results);
-		// return Object.keys(results).map(function(choice){
-		// 	return{
-		// 		label : choice,
-		// 		value : results[choice]
-		// 	};
-		// });
-	},
+	// barGraphData(results) {
+	// 	return Object.keys(results).map(function(choice) {
+	// 		return {
+	// 			label: choice,
+	// 			value: results[choice]
+	// 		};
+	// 	});
+	// },
 
 	render() {
 		return React.createElement(
@@ -26464,11 +26465,7 @@ var Board = React.createClass({
 			React.createElement(
 				Display,
 				{ 'if': this.props.status === 'connected' && this.props.currentQuestion },
-				React.createElement(BarChart, {
-					data: this.barGraphData(this.props.results),
-					title: this.props.currentQuestion.q,
-					height: window.innerHeight * 0.6,
-					width: window.innerWidth * 0.9 })
+				JSON.stringify(this.props.results)
 			),
 			React.createElement(
 				Display,
@@ -26476,7 +26473,7 @@ var Board = React.createClass({
 				React.createElement(
 					'h3',
 					null,
-					'Awaiting a question...'
+					'Awaiting a Question...'
 				)
 			)
 		);
